@@ -80,16 +80,6 @@ constexpr bool is_sequence_container_v<T, std::void_t<
   >
 > = false;
 
-//
-template <typename T, typename = std::void_t<>>
-constexpr bool has_clear_v = false;
-
-template <typename T>
-constexpr bool has_clear_v<T, std::void_t<
-    decltype(std::declval<T>().clear())
-  >
-> = true;
-
 class js0n
 {
   std::string_view s_;
