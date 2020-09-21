@@ -26,7 +26,7 @@ int main()
   {
     std::string_view a;
 
-    auto decode()
+    auto from_js0n()
     {
       return jcpp::dec::map("a", a);
     }
