@@ -443,10 +443,10 @@ auto array(A&& ...a) noexcept
 }
 
 template <typename A, typename ...B>
-auto map(std::string_view const& key, A&& a, B&& ...b) noexcept
+auto map(std::string_view key, A&& a, B&& ...b) noexcept
 {
   static_assert(!(sizeof...(B) % 2));
-  return [key, &a, &b...](js0n const& j)
+  return [key(std::move(key)), &a, &b...](js0n const& j)
     {
       bool error;
 
