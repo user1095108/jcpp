@@ -132,18 +132,6 @@ public:
     return *this;
   }
 
-  template <typename ...U>
-  void assign(U&& ...u) noexcept(noexcept(
-    s_ = std::string_view(std::forward<U>(u)...)))
-  {
-    s_ = std::string_view(std::forward<U>(u)...);
-  }
-
-  bool is_valid() const noexcept
-  {
-    return s_.data() && s_.size();
-  }
-
   template <typename T, std::size_t N>
   auto operator[](T (&k)[N]) const noexcept ->
     std::enable_if_t<std::is_same<char, std::decay_t<T>>{}, js0n>
@@ -173,9 +161,21 @@ public:
     return js0n(v, std::size_t(-1) == vlen ? 0 : vlen);
   }
 
+  template <typename ...U>
+  void assign(U&& ...u) noexcept(noexcept(
+    s_ = std::string_view(std::forward<U>(u)...)))
+  {
+    s_ = std::string_view(std::forward<U>(u)...);
+  }
+
   bool is_array() const noexcept
   {
     return is_valid() && (*this)[0].is_valid();
+  }
+
+  bool is_valid() const noexcept
+  {
+    return s_.data() && s_.size();
   }
 
 /*
