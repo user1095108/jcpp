@@ -6,7 +6,7 @@
 
 int main()
 {
-  jcpp::js0n const j("{\"foo\":\"bar\",\"barbar\":[1,2,3],\"obj\":[{\"a\":\"b\"}], \"a\":true}");
+  jcpp::js0n const j("{\"foo\":\"bar\",\"barbar\":[1,2,3],\"obj\":[{\"a\":\"b\"}],\"a\":true}");
 
   //
   jcpp::dec::map("foo", std::cout, "barbar", std::cout, "obj", std::cout)(j);
@@ -24,7 +24,7 @@ int main()
   {
     std::string_view a;
 
-    auto from_js0n()
+    auto from_js0n() noexcept
     {
       return jcpp::dec::map("a", a);
     }
