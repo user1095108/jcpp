@@ -132,9 +132,8 @@ public:
     return *this;
   }
 
-  template <typename T, std::size_t N>
-  auto operator[](T (&k)[N]) const noexcept ->
-    std::enable_if_t<std::is_same<char, std::decay_t<T>>{}, js0n>
+  template <std::size_t N>
+  auto operator[](char const (&k)[N]) const noexcept
   {
     std::size_t vlen;
 
