@@ -352,7 +352,7 @@ template <typename A,
   > = 0
 >
 inline auto decode(js0n const& j, A&& a) -> decltype(a.clear(),
-  a.push_back(std::decay_t<A>::value_type{}), bool())
+  a.push_back(std::declval<typename std::decay_t<A>::value_type>()), bool())
 {
   bool error;
 
@@ -365,8 +365,7 @@ inline auto decode(js0n const& j, A&& a) -> decltype(a.clear(),
 
     for (std::size_t i{}; !error && (i != sz); ++i)
     {
-      if (typename std::decay_t<A>::value_type v;
-        !(error = decode(j[i], v)))
+      if (typename std::decay_t<A>::value_type v; !(error = decode(j[i], v)))
       {
         a.push_back(std::move(v));
       }
