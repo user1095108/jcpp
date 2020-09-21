@@ -4,8 +4,6 @@
 
 #include <vector>
 
-#include "js0ncpp.hpp"
-
 int main()
 {
   jcpp::js0n const j("{\"foo\":\"bar\",\"barbar\":[1,2,3],\"obj\":[{\"a\":\"b\"}], \"a\":true}");

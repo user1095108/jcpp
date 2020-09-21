@@ -115,7 +115,7 @@ public:
       !std::is_same_v<js0n, std::decay_t<front_t<U...>>>
     >
   >
-  explicit js0n(U&& ...u) noexcept(noexcept(
+  js0n(U&& ...u) noexcept(noexcept(
     decltype(s_)(std::forward<U>(u)...))) :
     s_(std::forward<U>(u)...)
   {
@@ -386,7 +386,7 @@ auto array(A&& ...a) noexcept
           {
             if (auto const e(j[i]); e.is_valid())
             {
-              if (error = (a(i, e), ...))
+              if ((error = (a(i, e), ...)))
               {
                 break;
               }
@@ -419,7 +419,7 @@ auto array(A&& ...a) noexcept
           {
             if (auto const e(j[i]); e.is_valid())
             {
-              if (error = (a(e), ...))
+              if ((error = (a(e), ...)))
               {
                 break;
               }
