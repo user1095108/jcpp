@@ -351,14 +351,18 @@ inline auto decode(js0n const& j, A&& a) -> decltype(a.clear(),
   {
     a.clear();
 
-    auto const sz(j.size());
-    a.reserve(sz);
-
-    for (std::size_t i{}; !error && (i != sz); ++i)
+    for (std::size_t i{}; !error; ++i)
     {
-      if (typename std::decay_t<A>::value_type v; !(error = decode(j[i], v)))
+      if (auto const e(j[i]); e.is_valid())
       {
-        a.push_back(std::move(v));
+        if (typename std::decay_t<A>::value_type v; !(error = decode(e, v)))
+        {
+          a.push_back(std::move(v));
+        }
+      }
+      else
+      {
+        break;
       }
     }
   }
@@ -376,7 +380,7 @@ auto array(A&& ...a) noexcept
       if (!(error = !j.is_array()))
       {
         if constexpr ((1 == sizeof...(A)) && std::is_invocable_r_v<
-          front_t<A...>, bool, std::size_t, decltype(j)>)
+          bool, front_t<A...>, std::size_t, decltype(j)>)
         {
           for (std::size_t i{};; ++i)
           {
@@ -393,14 +397,32 @@ auto array(A&& ...a) noexcept
             }
           }
         }
-        else if constexpr ((1 == sizeof...(A)) &&
-          std::is_invocable_v<front_t<A...>, std::size_t, decltype(j)>)
+        else if constexpr ((1 == sizeof...(A)) && std::is_invocable_v<
+          front_t<A...>, std::size_t, decltype(j)>)
         {
           for (std::size_t i{};; ++i)
           {
             if (auto const e(j[i]); e.is_valid())
             {
               (a(i, e), ...);
+            }
+            else
+            {
+              break;
+            }
+          }
+        }
+        else if constexpr ((1 == sizeof...(A)) &&
+          std::is_invocable_r_v<bool, front_t<A...>, decltype(j)>)
+        {
+          for (std::size_t i{};; ++i)
+          {
+            if (auto const e(j[i]); e.is_valid())
+            {
+              if (error = (a(e), ...))
+              {
+                break;
+              }
             }
             else
             {
