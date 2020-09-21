@@ -351,26 +351,24 @@ template <typename A,
     int
   > = 0
 >
-inline bool decode(js0n const& j, A&& a)
+inline auto decode(js0n const& j, A&& a) -> decltype(a.clear(),
+  a.push_back(std::decay_t<A>::value_type{}), bool())
 {
   bool error;
 
   if (!(error = !j.is_array()))
   {
-    if constexpr (has_clear_v<A>)
+    a.clear();
+
+    auto const sz(j.size());
+    a.reserve(sz);
+
+    for (std::size_t i{}; !error && (i != sz); ++i)
     {
-      a.clear();
-
-      auto const sz(j.size());
-      a.reserve(sz);
-
-      for (std::size_t i{}; !error && (i != sz); ++i)
+      if (typename std::decay_t<A>::value_type v;
+        !(error = decode(j[i], v)))
       {
-        if (typename std::decay_t<A>::value_type v;
-          !(error = decode(j[i], v)))
-        {
-          a.push_back(std::move(v));
-        }
+        a.push_back(std::move(v));
       }
     }
   }
