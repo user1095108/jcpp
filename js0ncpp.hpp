@@ -298,13 +298,7 @@ inline bool decode(js0n const& j, A&& a) noexcept
 }
 
 // specials
-template <typename A,
-  std::enable_if_t<
-    std::is_same_v<std::decay_t<A>, std::ostream>,
-    int
-  > = 0
->
-inline bool decode(js0n const& j, A&& a)
+inline bool decode(js0n const& j, std::ostream& a)
 {
   if (j.is_valid())
   {
