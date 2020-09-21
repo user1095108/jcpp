@@ -338,6 +338,7 @@ inline auto decode(js0n const& j, A&& a)
   return a(j);
 }
 
+template <typename A>
 inline auto decode(js0n const& j, A&& a) -> decltype(a.from_js0n(), bool())
 {
   return decode(j, a.from_js0n());
