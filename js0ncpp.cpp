@@ -17,7 +17,7 @@ int main()
   //
   jcpp::dec::map("barbar",
     jcpp::dec::array(
-      [](jcpp::js0n const& j){int i; jcpp::dec::decode(j, i); std::cout << i << std::endl;}
+      [](jcpp::js0n const& j){jcpp::dec::decode(j, std::cout); std::cout << std::endl;}
     )
   )(j);
 
