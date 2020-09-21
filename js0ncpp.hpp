@@ -447,12 +447,9 @@ auto array(A&& ...a) noexcept
         }
         else
         {
-          if (auto const sz(j.size()); !(error = (sz != sizeof...(A))))
-          {
-            // decode the rest of the items
-            std::size_t i{};
-            error = error || (decode(j[i++], std::forward<A>(a)) || ...);
-          }
+          // decode the rest of the items
+          std::size_t i{};
+          error = error || (decode(j[i++], std::forward<A>(a)) || ...);
         }
       }
 
