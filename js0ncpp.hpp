@@ -90,15 +90,6 @@ constexpr bool has_clear_v<T, std::void_t<
   >
 > = true;
 
-template <typename T, typename = std::void_t<>>
-constexpr bool has_from_js0n_v = false;
-
-template <typename T>
-constexpr bool has_from_js0n_v<T, std::void_t<
-    decltype(std::declval<T>().from_js0n())
-  >
-> = true;
-
 class js0n
 {
   std::string_view s_;
@@ -347,10 +338,7 @@ inline auto decode(js0n const& j, A&& a)
   return a(j);
 }
 
-template <typename A,
-  std::enable_if_t<has_from_js0n_v<A>, int> = 0
->
-inline auto decode(js0n const& j, A&& a)
+inline auto decode(js0n const& j, A&& a) -> decltype(a.from_js0n(), bool())
 {
   return decode(j, a.from_js0n());
 }
