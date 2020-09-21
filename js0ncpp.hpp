@@ -300,16 +300,7 @@ inline bool decode(js0n const& j, A&& a) noexcept
 // specials
 inline bool decode(js0n const& j, std::ostream& a)
 {
-  if (j.is_valid())
-  {
-    std::string_view v;
-
-    return decode(j, v) ? true : (a << v, false);
-  }
-  else
-  {
-    return true;
-  }
+  return j.is_valid() ? a << j.view(), false : true;
 }
 
 template <typename A,
