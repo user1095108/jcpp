@@ -36,8 +36,8 @@ int main()
   //
   struct S
   {
-    float f{1.1f};
     std::string_view a{"lol"};
+    float f{1.1f};
 
     auto from_js0n() noexcept
     {
