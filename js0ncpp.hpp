@@ -352,6 +352,10 @@ inline auto decode(js0n const& j, A&& a)
       {
         error = decode(e, a[i]);
       }
+      else
+      {
+        break;
+      }
     }
   }
 
@@ -373,12 +377,15 @@ inline auto decode(js0n const& j, A&& a)
   {
     for (std::size_t i{}; !error; ++i)
     {
-      auto const e(j[i]);
+      typename std::decay_t<A>::value_type v;
 
-      if (typename std::decay_t<A>::value_type v;
-        e.is_valid() && !(error = decode(e, v)))
+      if (auto const e(j[i]); e.is_valid() && !(error = decode(e, v)))
       {
         a.emplace_back(std::move(v));
+      }
+      else
+      {
+        break;
       }
     }
   }
