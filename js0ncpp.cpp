@@ -15,6 +15,11 @@ int main()
   std::cout << std::endl;
 
   //
+  bool b;
+  jcpp::dec::map("a", b)(j);
+  std::cout << "a: " << b << std::endl;
+
+  //
   jcpp::dec::map("barbar",
     jcpp::dec::array([](auto const& j)
       {
