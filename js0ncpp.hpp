@@ -305,11 +305,11 @@ inline bool decode(js0n const& j, A&& a) noexcept
 
     if constexpr (sizeof(A) < sizeof(unsigned long long))
     {
-      std::strtoul(d, &ptr, 10);
+      a = std::strtoul(d, &ptr, 10);
     }
     else
     {
-      std::strtoull(d, &ptr, 10);
+      a = std::strtoull(d, &ptr, 10);
     }
 
     return ptr == d;
@@ -334,11 +334,11 @@ inline bool decode(js0n const& j, A&& a) noexcept
 
     if constexpr (sizeof(A) < sizeof(long long))
     {
-      std::strtol(d, &ptr, 10);
+      a = std::strtol(d, &ptr, 10);
     }
     else
     {
-      std::strtoll(d, &ptr, 10);
+      a = std::strtoll(d, &ptr, 10);
     }
 
     return ptr == d;
