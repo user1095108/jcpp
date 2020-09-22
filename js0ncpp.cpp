@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+#include <array>
+
 #include <vector>
 
 #include "js0ncpp.hpp"
@@ -48,6 +50,10 @@ int main()
   std::vector<S> vs;
   jcpp::dec::map("obj", vs)(j);
   std::cout << vs.size() << " " << vs.front().a << std::endl;
+
+  std::array<S, 2> as;
+  jcpp::dec::map("obj", as)(j);
+  std::cout << as.size() << " " << vs.front().a << std::endl;
 
   return 0;
 }

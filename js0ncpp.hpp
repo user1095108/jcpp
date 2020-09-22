@@ -80,6 +80,16 @@ constexpr bool is_sequence_container_v<T, std::void_t<
   >
 > = false;
 
+//
+template <typename, typename = std::void_t<>>
+constexpr bool has_push_back_v = false;
+
+template <typename T>
+constexpr bool has_push_back_v<T, std::void_t<
+    decltype(std::declval<T>().push_back({}))
+  >
+> = true;
+
 class js0n
 {
   std::string_view s_;
@@ -323,31 +333,52 @@ inline auto decode(js0n const& j, A&& a) -> decltype(a.from_js0n(), bool())
 // containers
 template <typename A,
   std::enable_if_t<
-    is_sequence_container_v<std::decay_t<A>>,
+    is_sequence_container_v<std::decay_t<A>> &&
+    !has_push_back_v<std::decay_t<A>>,
     int
   > = 0
 >
-inline auto decode(js0n const& j, A&& a) -> decltype(a.clear(),
-  a.push_back(std::declval<typename std::decay_t<A>::value_type>()), bool())
+inline auto decode(js0n const& j, A&& a)
 {
   bool error;
 
   if (!(error = !j.is_array()))
   {
-    a.clear();
+    auto const sz(a.size());
 
-    for (std::size_t i{}; !error; ++i)
+    for (std::size_t i{}; !error && (i < sz); ++i)
     {
-      if (auto const e(j[i]); e.is_valid())
-      {
-        if (typename std::decay_t<A>::value_type v; !(error = decode(e, v)))
-        {
-          a.push_back(std::move(v));
-        }
-      }
-      else
+      if (auto const e(j[i]); (error = !e.is_valid() || decode(e, a[i])))
       {
         break;
+      }
+    }
+  }
+
+  return error;
+}
+
+template <typename A,
+  std::enable_if_t<
+    is_sequence_container_v<std::decay_t<A>> &&
+    has_push_back_v<std::decay_t<A>>,
+    int
+  > = 0
+>
+inline auto decode(js0n const& j, A&& a)
+{
+  bool error;
+
+  if (!(error = !j.is_array()))
+  {
+    for (std::size_t i{}; !error; ++i)
+    {
+      auto const e(j[i]);
+
+      if (typename std::decay_t<A>::value_type v;
+        !(error = !e.is_valid() || decode(e, v)))
+      {
+        a.emplace_back(std::move(v));
       }
     }
   }
