@@ -381,7 +381,7 @@ inline auto decode(js0n const& j, A&& a)
 
       if (auto const e(j[i]); e.is_valid() && !(error = decode(e, v)))
       {
-        a.emplace_back(std::move(v));
+        a.push_back(std::move(v));
       }
       else
       {
