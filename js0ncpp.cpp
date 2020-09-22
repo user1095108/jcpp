@@ -10,7 +10,7 @@
 
 int main()
 {
-  jcpp::js0n const j("{\"foo\":\"bar\",\"barbar\":[1,2,3],\"obj\":[{\"a\":\"b\"}],\"a\":true}");
+  jcpp::js0n const j("{\"foo\":\"bar\",\"barbar\":[1,2,3],\"obj\":[{\"a\":\"b\",\"f\":\"0.123\"}],\"a\":true}");
 
   //
   jcpp::dec::map("foo", std::cout, "barbar", std::cout, "obj", std::cout)(j);
@@ -34,11 +34,12 @@ int main()
   //
   struct S
   {
+    float f{1.1f};
     std::string_view a;
 
     auto from_js0n() noexcept
     {
-      return jcpp::dec::map("a", a);
+      return jcpp::dec::map("a", a, "f", f);
     }
   } s;
 
@@ -49,11 +50,11 @@ int main()
   //
   std::array<S, 2> as;
   jcpp::dec::map("obj", as)(j);
-  std::cout << as.size() << " " << as.front().a << std::endl;
+  std::cout << as.size() << " " << as.front().f << std::endl;
 
   std::vector<S> vs;
   jcpp::dec::map("obj", vs)(j);
-  std::cout << vs.size() << " " << vs.front().a << std::endl;
+  std::cout << vs.size() << " " << vs.front().f << std::endl;
 
   return 0;
 }

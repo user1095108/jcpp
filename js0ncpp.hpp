@@ -2,11 +2,11 @@
 # define JS0NCPP_HPP
 # pragma once
 
+#include <cstdlib>
+
 #include <cstring>
 
 #include <ostream>
-
-#include <sstream>
 
 #include <string_view>
 
@@ -187,37 +187,6 @@ public:
     return s_.data() && s_.size();
   }
 
-/*
-  template <typename A,
-    std::enable_if_t<
-      std::is_arithmetic<T>{} &&
-      !std::is_pointer<T>{} &&
-      !std::is_reference<T>{} &&
-      !std::is_same<T, bool>{} &&
-      !std::is_same<T, char>{} &&
-      !std::is_same<T, signed char>{} &&
-      !std::is_same<T, unsigned char>{},
-      int
-    > = 0
-  >
-  bool get(A&& a) const noexcept
-  {
-    if (is_valid())
-    {
-      auto const first(s_.data());
-      auto const last(first + s_.size());
-
-      if (T v; last == std::from_chars(first, last, r).ptr)
-      {
-        a = v
-        return false;
-      }
-    }
-
-    return true;
-  }
-*/
-
   // size of an array, does not support objects
   std::size_t size() const noexcept
   {
@@ -289,6 +258,99 @@ inline bool decode(js0n const& j, A&& a) noexcept
 
 template <typename A,
   std::enable_if_t<
+    std::is_floating_point_v<std::decay_t<A>>,
+    int
+  > = 0
+>
+inline bool decode(js0n const& j, A&& a) noexcept
+{
+  if (j.is_valid())
+  {
+    char* ptr;
+
+    auto const d(j.view().data());
+
+    if constexpr (std::is_same_v<std::decay_t<A>, float>)
+    {
+      a = strtof(d, &ptr);
+    }
+    else if constexpr (std::is_same_v<std::decay_t<A>, double>)
+    {
+      a = strtod(d, &ptr);
+    }
+    else//if constexpr (std::is_same_v<std::decay_t<A>, long double>)
+    {
+      a = strtold(d, &ptr);
+    }
+
+    return ptr == d;
+  }
+
+  return true;
+}
+
+template <typename A,
+  std::enable_if_t<
+    std::is_integral_v<std::decay_t<A>> &&
+    !std::is_same_v<std::decay_t<A>, bool> &&
+    !std::is_signed_v<std::decay_t<A>>,
+    int
+  > = 0
+>
+inline bool decode(js0n const& j, A&& a) noexcept
+{
+  if (j.is_valid())
+  {
+    char* ptr; 
+    auto const d(j.view().data());
+
+    if constexpr (sizeof(A) < sizeof(unsigned long long))
+    {
+      std::strtoul(d, &ptr, 10);
+    }
+    else
+    {
+      std::strtoull(d, &ptr, 10);
+    }
+
+    return ptr == d;
+  }
+
+  return true;
+}
+
+template <typename A,
+  std::enable_if_t<
+    std::is_integral_v<std::decay_t<A>> &&
+    std::is_signed_v<std::decay_t<A>>,
+    int
+  > = 0
+>
+inline bool decode(js0n const& j, A&& a) noexcept
+{
+  if (j.is_valid())
+  {
+    char* ptr;
+    auto const d(j.view().data());
+
+    if constexpr (sizeof(A) < sizeof(long long))
+    {
+      std::strtol(d, &ptr, 10);
+    }
+    else
+    {
+      std::strtoll(d, &ptr, 10);
+    }
+
+    return ptr == d;
+  }
+
+  return true;
+}
+
+/*
+template <typename A,
+  std::enable_if_t<
     std::is_arithmetic_v<std::decay_t<A>> &&
     !std::is_same_v<std::decay_t<A>, bool> &&
     !std::is_same_v<std::decay_t<A>, char> &&
@@ -297,13 +359,14 @@ template <typename A,
     int
   > = 0
 >
-inline bool decode(js0n const& j, A&& a) noexcept
+bool decode(js0n const& j, A&& a) noexcept
 {
   if (j.is_valid())
   {
-    std::stringstream ss(std::string{j.view()});
+    auto const first(j.view().data());
+    auto const last(first + j.view().size());
 
-    if (ss >> a)
+    if (last == std::from_chars(first, last, a).ptr)
     {
       return false;
     }
@@ -311,6 +374,7 @@ inline bool decode(js0n const& j, A&& a) noexcept
 
   return true;
 }
+*/
 
 // specials
 template <typename A,
