@@ -10,10 +10,12 @@
 
 int main()
 {
-  jcpp::js0n const j("{\"foo\":\"bar\",\"barbar\":[1,2,3],\"obj\":[{\"a\":\"b\",\"f\":\"0.123\"}],\"a\":true}");
+  jcpp::js0n const j("{\"foo\":\"bar\",\"barbar\":[1,2,3],\"obj\":[{\"a\":\"b\",\"f\":0.123}],\"a\":true}");
 
   //
   jcpp::dec::map("foo", std::cout, "barbar", std::cout, "obj", std::cout)(j);
+  std::cout << std::endl;
+  jcpp::dec::map("obj", jcpp::dec::array(jcpp::dec::map("f", std::cout)))(j);
   std::cout << std::endl;
 
   //
@@ -35,7 +37,7 @@ int main()
   struct S
   {
     float f{1.1f};
-    std::string_view a;
+    std::string_view a{"lol"};
 
     auto from_js0n() noexcept
     {

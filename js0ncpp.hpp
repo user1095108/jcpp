@@ -267,7 +267,6 @@ inline bool decode(js0n const& j, A&& a) noexcept
   if (j.is_valid())
   {
     char* ptr;
-
     auto const d(j.view().data());
 
     if constexpr (std::is_same_v<std::decay_t<A>, float>)
