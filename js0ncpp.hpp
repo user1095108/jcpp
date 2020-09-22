@@ -263,11 +263,12 @@ inline bool decode(js0n const& j, A&& a) noexcept
 {
   if (j.is_valid())
   {
-    if (auto& v(j.view()); "true" == v)
+    if (auto& v(j.view()); (4 == v.size()) &&
+      !std::strncmp(v.data(), "true", 4))
     {
       return !(a = true);
     }
-    else if ("false" == v)
+    else if ((5 == v.size()) && !std::strncmp(v.data(), "false", 5))
     {
       return a = false;
     }
