@@ -39,7 +39,7 @@ int main()
     std::string_view a{"lol"};
     float f{1.1f};
 
-    auto from_js0n() noexcept
+    auto operator()(jcpp::dec::tag) noexcept
     {
       return jcpp::dec::map("a", a, "f", f);
     }

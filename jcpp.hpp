@@ -121,9 +121,14 @@ public:
   }
 
   template <typename ...U,
-    typename = std::enable_if_t<
-      !std::is_same_v<js0n, std::decay_t<front_t<U...>>>
-    >
+    std::enable_if_t<
+      !std::is_same_v<js0n, std::decay_t<front_t<U...>>>,
+      int
+    > = 0,
+    std::enable_if_t<
+      std::is_constructible_v<std::string_view, U...>,
+      int
+    > = 0
   >
   js0n(U&& ...u) noexcept(noexcept(
     decltype(s_)(std::forward<U>(u)...))) :
@@ -214,6 +219,8 @@ public:
 
 namespace dec
 {
+
+struct tag {};
 
 // anything can be turned into a string
 inline bool decode(js0n const& j, std::string& a) noexcept
@@ -388,9 +395,9 @@ inline auto decode(js0n const& j, A&& a)
 }
 
 template <typename A>
-inline auto decode(js0n const& j, A&& a) -> decltype(a.from_js0n(), bool())
+inline auto decode(js0n const& j, A&& a) -> decltype(a(tag{}), bool())
 {
-  return decode(j, a.from_js0n());
+  return decode(j, a(tag{}));
 }
 
 // containers
