@@ -52,11 +52,11 @@ int main()
   //
   std::array<S, 2> as;
   jcpp::dec::map("obj", as)(j);
-  std::cout << as.size() << " " << as.front().f << std::endl;
+  std::cout << as.size() << " " << as.front().a << " " << as.front().f << std::endl;
 
   std::vector<S> vs;
   jcpp::dec::map("obj", vs)(j);
-  std::cout << vs.size() << " " << vs.front().f << std::endl;
+  std::cout << vs.size() << " " << as.front().a << " " << vs.front().f << std::endl;
 
   return 0;
 }
