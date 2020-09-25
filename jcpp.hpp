@@ -1,5 +1,5 @@
-#ifndef JS0NCPP_HPP
-# define JS0NCPP_HPP
+#ifndef JCPP_HPP
+# define JCPP_HPP
 # pragma once
 
 #include <cstdlib>
@@ -578,4 +578,4 @@ auto map(std::string_view key, A&& a, B&& ...b) noexcept
 
 }
 
-#endif // JS0NCPP_HPP
+#endif // JCPP_HPP
