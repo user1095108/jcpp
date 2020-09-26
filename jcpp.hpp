@@ -217,12 +217,12 @@ inline bool decode(js0n const& j, std::ostream& a)
 // anything can be turned into a string
 inline bool decode(js0n const& j, std::string& a) noexcept
 {
-  return a = j.view(), false;
+  return j.is_valid() ? a = j.view(), false : true;
 }
 
 inline bool decode(js0n const& j, std::string_view& a) noexcept
 {
-  return a = j.view(), false;
+  return j.is_valid() ? a = j.view(), false : true;
 }
 
 // bool
