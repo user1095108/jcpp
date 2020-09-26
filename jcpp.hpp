@@ -2,6 +2,8 @@
 # define JCPP_HPP
 # pragma once
 
+#include <cassert>
+
 #include <cstdlib>
 
 #include <cstring>
@@ -187,6 +189,7 @@ public:
   // size of an array, does not support objects
   std::size_t size() const noexcept
   {
+    assert(is_array());
     std::size_t i{};
 
     if (is_array())
