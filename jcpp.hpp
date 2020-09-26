@@ -121,7 +121,7 @@ public:
 
   template <std::size_t N>
   explicit js0n(char const (&s)[N]) noexcept :
-    s_(s, N)
+    s_(s, N - 1)
   {
   }
 
@@ -135,7 +135,7 @@ public:
       int
     > = 0
   >
-  js0n(U&& ...u) noexcept :
+  js0n(U&& ...u) noexcept(noexcept(decltype(s_)(std::forward<U>(u)...))) :
     s_(std::forward<U>(u)...)
   {
   }
@@ -144,11 +144,9 @@ public:
   js0n& operator=(js0n&&) = default;
 
   template <typename U>
-  js0n& operator=(U&& u) noexcept(noexcept(s_ = std::forward<U>(u)))
+  js0n& operator=(U&& u) noexcept(noexcept(assign(std::forward<U>(u))))
   {
-    s_ = std::forward<U>(u);
-
-    return *this;
+    return assign(std::forward<U>(u)), *this;
   }
 
   template <std::size_t N>
