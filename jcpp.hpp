@@ -144,9 +144,9 @@ public:
   js0n& operator=(js0n&&) = default;
 
   template <typename U>
-  js0n& operator=(U&& u) noexcept(noexcept(assign(std::forward<U>(u))))
+  js0n& operator=(U&& u) noexcept(noexcept(s_ = std::forward<U>(u)))
   {
-    return assign(std::forward<U>(u)), *this;
+    return s_ = std::forward<U>(u), *this;
   }
 
   template <std::size_t N>
@@ -182,14 +182,6 @@ public:
   auto& view() const noexcept
   {
     return s_;
-  }
-
-  //
-  template <typename ...U>
-  void assign(U&& ...u) noexcept(noexcept(
-    s_ = std::string_view(std::forward<U>(u)...)))
-  {
-    s_ = std::string_view(std::forward<U>(u)...);
   }
 
   // size of an array, does not support objects
