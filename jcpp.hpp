@@ -224,6 +224,11 @@ namespace dec
 
 struct tag {};
 
+inline bool decode(js0n const& j, std::ostream& a)
+{
+  return j.is_valid() ? a << j.view(), false : true;
+}
+
 // anything can be turned into a string
 inline bool decode(js0n const& j, std::string& a) noexcept
 {
@@ -233,11 +238,6 @@ inline bool decode(js0n const& j, std::string& a) noexcept
 inline bool decode(js0n const& j, std::string_view& a) noexcept
 {
   return j.is_valid() ? a = j.view(), false : true;
-}
-
-inline bool decode(js0n const& j, std::ostream& a)
-{
-  return j.is_valid() ? a << j.view(), false : true;
 }
 
 // bool
@@ -280,15 +280,15 @@ inline bool decode(js0n const& j, A&& a) noexcept
 
     if constexpr (std::is_same_v<std::decay_t<A>, float>)
     {
-      a = strtof(d, &ptr);
+      a = std::strtof(d, &ptr);
     }
     else if constexpr (std::is_same_v<std::decay_t<A>, double>)
     {
-      a = strtod(d, &ptr);
+      a = std::strtod(d, &ptr);
     }
     else//if constexpr (std::is_same_v<std::decay_t<A>, long double>)
     {
-      a = strtold(d, &ptr);
+      a = std::strtold(d, &ptr);
     }
 
     return ptr == d;
@@ -301,7 +301,7 @@ template <typename A,
   std::enable_if_t<
     std::is_integral_v<std::decay_t<A>> &&
     !std::is_same_v<std::decay_t<A>, bool> &&
-    !std::is_signed_v<std::decay_t<A>>,
+    std::is_unsigned_v<std::decay_t<A>>,
     int
   > = 0
 >
