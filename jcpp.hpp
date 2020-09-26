@@ -82,11 +82,20 @@ constexpr bool is_sequence_container_v<T, std::void_t<
 
 //
 template <typename, typename = std::void_t<>>
-constexpr bool has_push_back_v = false;
+constexpr bool has_array_subscript_v = false;
 
 template <typename T>
-constexpr bool has_push_back_v<T, std::void_t<
-    decltype(std::declval<T>().push_back({}))
+constexpr bool has_array_subscript_v<T, std::void_t<
+    decltype(std::declval<T>().operator[]({}))
+  >
+> = true;
+
+template <typename, typename = std::void_t<>>
+constexpr bool has_emplace_back_v = false;
+
+template <typename T>
+constexpr bool has_emplace_back_v<T, std::void_t<
+    decltype(std::declval<T>().emplace_back({}))
   >
 > = true;
 
@@ -404,7 +413,8 @@ inline auto decode(js0n const& j, A&& a) -> decltype(a(tag{}), bool())
 template <typename A,
   std::enable_if_t<
     is_sequence_container_v<std::decay_t<A>> &&
-    !has_push_back_v<std::decay_t<A>>,
+    has_array_subscript_v<std::decay_t<A>> &&
+    !has_emplace_back_v<std::decay_t<A>>,
     int
   > = 0
 >
@@ -435,7 +445,7 @@ inline auto decode(js0n const& j, A&& a)
 template <typename A,
   std::enable_if_t<
     is_sequence_container_v<std::decay_t<A>> &&
-    has_push_back_v<std::decay_t<A>>,
+    has_emplace_back_v<std::decay_t<A>>,
     int
   > = 0
 >
@@ -451,7 +461,7 @@ inline auto decode(js0n const& j, A&& a)
 
       if (auto const e(j[i]); e.is_valid() && !(error = decode(e, v)))
       {
-        a.push_back(std::move(v));
+        a.emplace_back(std::move(v));
       }
       else
       {
