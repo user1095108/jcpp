@@ -191,7 +191,7 @@ public:
 
   bool is_valid() const noexcept
   {
-    return s_.data() && s_.size();
+    return s_.data();
   }
 
   // size of an array, does not support objects
