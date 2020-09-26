@@ -168,13 +168,7 @@ public:
     return {::js0n(nullptr, i, s_.data(), s_.size(), &vlen), vlen};
   }
 
-  template <typename ...U>
-  void assign(U&& ...u) noexcept(noexcept(
-    s_ = std::string_view(std::forward<U>(u)...)))
-  {
-    s_ = std::string_view(std::forward<U>(u)...);
-  }
-
+  //
   bool is_array() const noexcept
   {
     return is_valid() && (*this)[0].is_valid();
@@ -183,6 +177,18 @@ public:
   bool is_valid() const noexcept
   {
     return s_.data();
+  }
+
+  template <typename ...U>
+  void assign(U&& ...u) noexcept(noexcept(
+    s_ = std::string_view(std::forward<U>(u)...)))
+  {
+    s_ = std::string_view(std::forward<U>(u)...);
+  }
+
+  auto& view() const noexcept
+  {
+    return s_;
   }
 
   // size of an array, does not support objects
@@ -202,11 +208,6 @@ public:
     }
 
     return i;
-  }
-
-  auto& view() const noexcept
-  {
-    return s_;
   }
 };
 
