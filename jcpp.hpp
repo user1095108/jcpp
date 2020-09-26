@@ -95,7 +95,9 @@ constexpr bool has_emplace_back_v = false;
 
 template <typename T>
 constexpr bool has_emplace_back_v<T, std::void_t<
-    decltype(std::declval<T>().emplace_back({}))
+    decltype(std::declval<T>().emplace_back(
+      std::declval<typename T::value_type>())
+    )
   >
 > = true;
 
