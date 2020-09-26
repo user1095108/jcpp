@@ -10,8 +10,6 @@
 
 #include <string>
 
-#include <string_view>
-
 #include <type_traits>
 
 #include <utility>
@@ -552,7 +550,7 @@ auto array(A&& ...a) noexcept
         {
           // decode the rest of the items
           std::size_t i{};
-          error = error || (decode(j[i++], std::forward<A>(a)) || ...);
+          return error || (decode(j[i++], std::forward<A>(a)) || ...);
         }
       }
 
@@ -571,16 +569,14 @@ auto map(std::string_view key, A&& a, B&& ...b) noexcept
       if (auto const v(j[key]); !(error = !v.is_valid()))
       {
         error = decode(v, std::forward<A>(a));
+
+        if constexpr (bool(sizeof...(b)))
+        {
+          return error || map(std::forward<B>(b)...)(j);
+        }
       }
 
-      if constexpr (bool(sizeof...(b)))
-      {
-        return error || map(std::forward<B>(b)...)(j);
-      }
-      else
-      {
-        return error;
-      }
+      return error;
     };
 }
 
