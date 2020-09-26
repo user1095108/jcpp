@@ -119,11 +119,9 @@ public:
   js0n(js0n const&) = default;
   js0n(js0n&&) = default;
 
-  template <typename T, std::size_t N,
-    typename = std::enable_if_t<std::is_same_v<char, std::decay_t<T>>>
-  >
-  explicit js0n(T(&s)[N]) noexcept(noexcept(decltype(s_)(s, N))) :
-    s_(s, N)
+  template <std::size_t N>
+  explicit js0n(char const (&s)[N]) noexcept :
+    s_(s, N - 1)
   {
   }
 
