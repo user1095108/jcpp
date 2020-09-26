@@ -153,7 +153,7 @@ public:
   js0n operator[](char const (&k)[N]) const noexcept
   {
     std::size_t vlen;
-    return {::js0n(k, N - 1, s_.data(), s_.size(), &vlen), vlen};
+    return {::js0n(k, N, s_.data(), s_.size(), &vlen), vlen};
   }
 
   js0n operator[](std::string_view const& k) const noexcept
@@ -179,16 +179,17 @@ public:
     return s_.data();
   }
 
+  auto& view() const noexcept
+  {
+    return s_;
+  }
+
+  //
   template <typename ...U>
   void assign(U&& ...u) noexcept(noexcept(
     s_ = std::string_view(std::forward<U>(u)...)))
   {
     s_ = std::string_view(std::forward<U>(u)...);
-  }
-
-  auto& view() const noexcept
-  {
-    return s_;
   }
 
   // size of an array, does not support objects
