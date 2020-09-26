@@ -121,7 +121,7 @@ public:
 
   template <std::size_t N>
   explicit js0n(char const (&s)[N]) noexcept :
-    s_(s, N - 1)
+    s_(s, N)
   {
   }
 
