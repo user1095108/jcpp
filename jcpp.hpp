@@ -548,7 +548,7 @@ auto array(A&& ...a) noexcept
             }
           }
         }
-        else
+        else if constexpr (bool(sizeof...(a)))
         {
           // decode the rest of the items
           std::size_t i{};
