@@ -211,7 +211,7 @@ struct tag {};
 
 inline bool decode(js0n const& j, std::ostream& a)
 {
-  return a << j.view(), false;
+  return (j.is_valid() ? a << j.view() : a << nullptr), false;
 }
 
 // anything can be turned into a string
