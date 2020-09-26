@@ -121,7 +121,7 @@ public:
 
   template <std::size_t N>
   explicit js0n(char const (&s)[N]) noexcept :
-    s_(s, N - 1)
+    s_(s, N)
   {
   }
 
@@ -135,8 +135,7 @@ public:
       int
     > = 0
   >
-  js0n(U&& ...u) noexcept(noexcept(
-    decltype(s_)(std::forward<U>(u)...))) :
+  js0n(U&& ...u) noexcept :
     s_(std::forward<U>(u)...)
   {
   }
