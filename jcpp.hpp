@@ -82,7 +82,7 @@ constexpr bool has_array_subscript_v = false;
 
 template <typename T>
 constexpr bool has_array_subscript_v<T, std::void_t<
-    decltype(std::declval<T>().operator[]({}))
+    decltype(std::declval<T>().operator[](0))
   >
 > = true;
 
