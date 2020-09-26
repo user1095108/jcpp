@@ -8,6 +8,8 @@
 
 #include <ostream>
 
+#include <string>
+
 #include <string_view>
 
 #include <type_traits>
@@ -27,10 +29,6 @@ struct front
 
 template <typename ...A>
 using front_t = typename front<A...>::type;
-
-//
-template <typename U>
-using remove_cvref_t = std::remove_cv_t<std::remove_reference_t<U>>;
 
 //
 template <typename, typename = std::void_t<>>
