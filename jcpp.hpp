@@ -157,31 +157,31 @@ public:
   }
 
   template <std::size_t N>
-  auto operator[](char const (&k)[N]) const noexcept
+  js0n operator[](char const (&k)[N]) const noexcept
   {
     std::size_t vlen;
 
     auto const v(::js0n(k, N - 1, s_.data(), s_.size(), &vlen));
 
-    return js0n(v, std::size_t(-1) == vlen ? 0 : vlen);
+    return {v, std::size_t(-1) == vlen ? 0 : vlen};
   }
 
-  auto operator[](std::string_view const& k) const noexcept
+  js0n operator[](std::string_view const& k) const noexcept
   {
     std::size_t vlen;
 
     auto const v(::js0n(k.data(), k.size(), s_.data(), s_.size(), &vlen));
 
-    return js0n(v, std::size_t(-1) == vlen ? 0 : vlen);
+    return {v, std::size_t(-1) == vlen ? 0 : vlen};
   }
 
-  auto operator[](std::size_t const i) const noexcept
+  js0n operator[](std::size_t const i) const noexcept
   {
     std::size_t vlen;
 
     auto const v(::js0n(nullptr, i, s_.data(), s_.size(), &vlen));
 
-    return js0n(v, std::size_t(-1) == vlen ? 0 : vlen);
+    return {v, std::size_t(-1) == vlen ? 0 : vlen};
   }
 
   template <typename ...U>
