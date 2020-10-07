@@ -209,6 +209,13 @@ namespace dec
 
 struct tag {};
 
+template <typename A>
+inline auto decode(js0n const& j, A&& a) -> decltype(
+  decode(j, std::forward<A>(a), tag{}))
+{
+  return decode(j, std::forward<A>(a), tag{});
+}
+
 inline bool decode(js0n const& j, std::ostream& a) noexcept
 {
   return (j.is_valid() ? a << j.view() : a << nullptr), false;
