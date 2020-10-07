@@ -211,7 +211,7 @@ struct tag {};
 
 template <typename A>
 inline auto decode(js0n const& j, A&& a) -> decltype(
-  decode(j, std::forward<A>(a), tag{}))
+  bool(decode(j, std::forward<A>(a), tag{})))
 {
   return decode(j, std::forward<A>(a), tag{});
 }
