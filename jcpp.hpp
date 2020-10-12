@@ -407,6 +407,7 @@ inline auto decode(js0n const& j, A&& a)
 {
   bool error;
 
+  // an empty array [], will not be recognized, a js0n quirk
   if (!(error = !j.is_array()))
   {
     auto const sz(a.size());
