@@ -153,7 +153,7 @@ public:
   js0n operator[](char const (&k)[N]) const noexcept
   {
     std::size_t vlen;
-    return {::js0n(k, N, s_.data(), s_.size(), &vlen), vlen};
+    return {::js0n(k, N - 1, s_.data(), s_.size(), &vlen), vlen};
   }
 
   js0n operator[](std::string_view const& k) const noexcept
