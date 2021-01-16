@@ -6,6 +6,8 @@
 
 #include <cstring>
 
+#include <charconv>
+
 #include <ostream>
 
 #include <string>
@@ -30,17 +32,17 @@ using front_t = typename front<A...>::type;
 
 //
 template <typename, typename = std::void_t<>>
-constexpr bool is_complete_v = false;
+constexpr auto is_complete_v = false;
 
 template <typename T>
-constexpr bool is_complete_v<T, std::void_t<decltype(sizeof(T))>> = true;
+constexpr auto is_complete_v<T, std::void_t<decltype(sizeof(T))>> = true;
 
 //
 template <typename T, typename = std::void_t<>>
-constexpr bool is_container_v = false;
+constexpr auto is_container_v = false;
 
 template <typename T>
-constexpr bool is_container_v<T, std::void_t<
+constexpr auto is_container_v<T, std::void_t<
     std::enable_if_t<is_complete_v<typename T::const_iterator>>,
     std::enable_if_t<is_complete_v<typename T::iterator>>,
     std::enable_if_t<is_complete_v<typename T::size_type>>,
@@ -55,42 +57,35 @@ constexpr bool is_container_v<T, std::void_t<
 > = true;
 
 template <typename T, typename = std::void_t<>>
-constexpr bool is_associative_container_v = false;
+constexpr auto is_associative_container_v = false;
 
 template <typename T>
-constexpr bool is_associative_container_v<T, std::void_t<
+constexpr auto is_associative_container_v<T, std::void_t<
     std::enable_if_t<is_complete_v<typename T::key_compare>>,
     std::enable_if_t<is_complete_v<typename T::key_type>>,
     std::enable_if_t<is_complete_v<typename T::mapped_type>>
   >
 > = is_container_v<T>;
 
-template <typename T, typename = std::void_t<>>
-constexpr bool is_sequence_container_v = is_container_v<T>;
-
 template <typename T>
-constexpr bool is_sequence_container_v<T, std::void_t<
-    std::enable_if_t<is_complete_v<typename T::key_compare>>,
-    std::enable_if_t<is_complete_v<typename T::key_type>>,
-    std::enable_if_t<is_complete_v<typename T::mapped_type>>
-  >
-> = false;
+constexpr auto is_sequence_container_v = is_container_v<T> &&
+  !is_associative_container_v<T>;
 
 //
 template <typename, typename = std::void_t<>>
-constexpr bool has_array_subscript_v = false;
+constexpr auto has_array_subscript_v = false;
 
 template <typename T>
-constexpr bool has_array_subscript_v<T, std::void_t<
+constexpr auto has_array_subscript_v<T, std::void_t<
     decltype(std::declval<T>().operator[](0))
   >
 > = true;
 
 template <typename, typename = std::void_t<>>
-constexpr bool has_emplace_back_v = false;
+constexpr auto has_emplace_back_v = false;
 
 template <typename T>
-constexpr bool has_emplace_back_v<T, std::void_t<
+constexpr auto has_emplace_back_v<T, std::void_t<
     decltype(std::declval<T>().emplace_back(
       std::declval<typename T::value_type>())
     )
@@ -278,7 +273,7 @@ inline bool decode(js0n const& j, A&& a) noexcept
     {
       a = std::strtod(d, &ptr);
     }
-    else//if constexpr (std::is_same_v<std::decay_t<A>, long double>)
+    else if constexpr (std::is_same_v<std::decay_t<A>, long double>)
     {
       a = std::strtold(d, &ptr);
     }
@@ -291,67 +286,8 @@ inline bool decode(js0n const& j, A&& a) noexcept
 
 template <typename A,
   std::enable_if_t<
-    std::is_integral_v<std::decay_t<A>> &&
-    !std::is_same_v<std::decay_t<A>, bool> &&
-    std::is_unsigned_v<std::decay_t<A>>,
-    int
-  > = 0
->
-inline bool decode(js0n const& j, A&& a) noexcept
-{
-  if (j.is_valid())
-  {
-    char* ptr; 
-    auto const d(j.view().data());
-
-    if constexpr (sizeof(A) < sizeof(unsigned long long))
-    {
-      a = std::strtoul(d, &ptr, 10);
-    }
-    else
-    {
-      a = std::strtoull(d, &ptr, 10);
-    }
-
-    return ptr == d;
-  }
-
-  return true;
-}
-
-template <typename A,
-  std::enable_if_t<
-    std::is_integral_v<std::decay_t<A>> &&
-    std::is_signed_v<std::decay_t<A>>,
-    int
-  > = 0
->
-inline bool decode(js0n const& j, A&& a) noexcept
-{
-  if (j.is_valid())
-  {
-    char* ptr;
-    auto const d(j.view().data());
-
-    if constexpr (sizeof(A) < sizeof(long long))
-    {
-      a = std::strtol(d, &ptr, 10);
-    }
-    else
-    {
-      a = std::strtoll(d, &ptr, 10);
-    }
-
-    return ptr == d;
-  }
-
-  return true;
-}
-
-/*
-template <typename A,
-  std::enable_if_t<
     std::is_arithmetic_v<std::decay_t<A>> &&
+    !std::is_floating_point_v<std::decay_t<A>> &&
     !std::is_same_v<std::decay_t<A>, bool> &&
     !std::is_same_v<std::decay_t<A>, char> &&
     !std::is_same_v<std::decay_t<A>, signed char> &&
@@ -363,18 +299,16 @@ bool decode(js0n const& j, A&& a) noexcept
 {
   if (j.is_valid())
   {
-    auto const first(j.view().data());
-    auto const last(first + j.view().size());
+    auto& view(j.view());
 
-    if (last == std::from_chars(first, last, a).ptr)
-    {
-      return false;
-    }
+    auto const first(view.data());
+    auto const last(first + view.size());
+
+    return last != std::from_chars(first, last, a).ptr;
   }
 
   return true;
 }
-*/
 
 // specials
 template <typename A,
@@ -412,7 +346,7 @@ inline auto decode(js0n const& j, A&& a)
   {
     auto const sz(a.size());
 
-    for (std::size_t i{}; !error && (i < sz); ++i)
+    for (decltype(a.size()) i{}; !error && (i != sz); ++i)
     {
       if (auto const e(j[i]); e.is_valid())
       {
@@ -441,7 +375,7 @@ inline auto decode(js0n const& j, A&& a)
 
   if (!(error = !j.is_array()))
   {
-    for (std::size_t i{}; !error; ++i)
+    for (decltype(a.size()) i{}; !error; ++i)
     {
       typename std::decay_t<A>::value_type v;
 
