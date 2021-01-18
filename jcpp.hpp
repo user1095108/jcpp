@@ -329,6 +329,30 @@ inline auto decode(js0n const& j, A&& a) -> decltype(a(tag{}), bool())
 }
 
 // containers
+template <typename A>
+inline auto decode(js0n const& j, std::shared_ptr<A[]>& a)
+{
+  bool error;
+
+  // an empty array [], will not be recognized, a js0n quirk
+  if (!(error = !j.is_array()))
+  {
+    for (std::size_t i{}; !error; ++i)
+    {
+      if (auto const e(j[i]); e.is_valid())
+      {
+        error = decode(e, a[i]);
+      }
+      else
+      {
+        break;
+      }
+    }
+  }
+
+  return error;
+}
+
 template <typename A,
   std::enable_if_t<
     is_sequence_container_v<std::decay_t<A>> &&
