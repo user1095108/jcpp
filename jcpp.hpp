@@ -96,20 +96,18 @@ constexpr auto has_emplace_back_v<T, std::void_t<
 >{true};
 
 //
-template <typename>
+template <typename, typename = std::void_t<>>
 constexpr auto is_managed_array_v{false};
 
 template <typename T>
-constexpr auto is_managed_array_v<std::shared_ptr<T[]>>{true};
+constexpr auto is_managed_array_v<std::shared_ptr<T>,
+  std::void_t<std::enable_if_t<std::is_array_v<T>>>
+>{true};
 
 template <typename T>
-constexpr auto is_managed_array_v<std::unique_ptr<T[]>>{true};
-
-template <typename T, std::size_t N>
-constexpr auto is_managed_array_v<std::shared_ptr<T[N]>>{true};
-
-template <typename T, std::size_t N>
-constexpr auto is_managed_array_v<std::unique_ptr<T[N]>>{true};
+constexpr auto is_managed_array_v<std::unique_ptr<T>,
+  std::void_t<std::enable_if_t<std::is_array_v<T>>>
+>{true};
 
 //
 class js0n
