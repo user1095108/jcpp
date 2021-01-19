@@ -105,6 +105,12 @@ constexpr auto is_managed_array_v<std::shared_ptr<T[]>>{true};
 template <typename T>
 constexpr auto is_managed_array_v<std::unique_ptr<T[]>>{true};
 
+template <typename T, std::size_t N>
+constexpr auto is_managed_array_v<std::shared_ptr<T[N]>>{true};
+
+template <typename T, std::size_t N>
+constexpr auto is_managed_array_v<std::unique_ptr<T[N]>>{true};
+
 //
 class js0n
 {
