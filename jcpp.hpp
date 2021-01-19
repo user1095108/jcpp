@@ -32,14 +32,14 @@ using front_t = typename front<A...>::type;
 
 //
 template <typename, typename = std::void_t<>>
-constexpr auto is_complete_v = false;
+constexpr auto is_complete_v{false};
 
 template <typename T>
-constexpr auto is_complete_v<T, std::void_t<decltype(sizeof(T))>> = true;
+constexpr auto is_complete_v<T, std::void_t<decltype(sizeof(T))>>{true};
 
 //
 template <typename T, typename = std::void_t<>>
-constexpr auto is_container_v = false;
+constexpr auto is_container_v{false};
 
 template <typename T>
 constexpr auto is_container_v<T, std::void_t<
@@ -54,10 +54,11 @@ constexpr auto is_container_v<T, std::void_t<
     decltype(std::declval<T>().end()),
     decltype(std::declval<T>().size())
   >
-> = true;
+>{true};
 
+//
 template <typename T, typename = std::void_t<>>
-constexpr auto is_associative_container_v = false;
+constexpr auto is_associative_container_v{false};
 
 template <typename T>
 constexpr auto is_associative_container_v<T, std::void_t<
@@ -67,22 +68,24 @@ constexpr auto is_associative_container_v<T, std::void_t<
   >
 > = is_container_v<T>;
 
+//
 template <typename T>
 constexpr auto is_sequence_container_v = is_container_v<T> &&
   !is_associative_container_v<T>;
 
 //
 template <typename, typename = std::void_t<>>
-constexpr auto has_array_subscript_v = false;
+constexpr auto has_array_subscript_v{false};
 
 template <typename T>
 constexpr auto has_array_subscript_v<T, std::void_t<
     decltype(std::declval<T>().operator[](0))
   >
-> = true;
+>{true};
 
+//
 template <typename, typename = std::void_t<>>
-constexpr auto has_emplace_back_v = false;
+constexpr auto has_emplace_back_v{false};
 
 template <typename T>
 constexpr auto has_emplace_back_v<T, std::void_t<
@@ -90,17 +93,19 @@ constexpr auto has_emplace_back_v<T, std::void_t<
       std::declval<typename T::value_type>())
     )
   >
-> = true;
+>{true};
 
+//
 template <typename>
-constexpr auto is_managed_array_v = false;
+constexpr auto is_managed_array_v{false};
 
 template <typename T>
-constexpr auto is_managed_array_v<std::shared_ptr<T[]>> = true;
+constexpr auto is_managed_array_v<std::shared_ptr<T[]>>{true};
 
 template <typename T>
-constexpr auto is_managed_array_v<std::unique_ptr<T[]>> = true;
+constexpr auto is_managed_array_v<std::unique_ptr<T[]>>{true};
 
+//
 class js0n
 {
   std::string_view s_;
