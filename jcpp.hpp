@@ -93,13 +93,13 @@ constexpr auto has_emplace_back_v<T, std::void_t<
 > = true;
 
 template <typename>
-constexpr auto is_smart_array_v = false;
+constexpr auto is_managed_array_v = false;
 
 template <typename T>
-constexpr auto is_smart_array_v<std::shared_ptr<T[]>> = true;
+constexpr auto is_managed_array_v<std::shared_ptr<T[]>> = true;
 
 template <typename T>
-constexpr auto is_smart_array_v<std::unique_ptr<T[]>> = true;
+constexpr auto is_managed_array_v<std::unique_ptr<T[]>> = true;
 
 class js0n
 {
@@ -339,7 +339,7 @@ inline auto decode(js0n const& j, A&& a) -> decltype(a(tag{}), bool())
 
 // containers
 template <typename A,
-  std::enable_if_t<is_smart_array_v<A>, int> = 0
+  std::enable_if_t<is_managed_array_v<A>, int> = 0
 >
 inline auto decode(js0n const& j, A& a)
 {
